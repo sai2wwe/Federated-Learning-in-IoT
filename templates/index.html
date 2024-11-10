@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHT Sensor Prediction</title>
+    <script>
+        async function getPrediction() {
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                const result = await response.json();
+
+                // Check if the result contains data
+                document.getElementById('temperature').innerText = result.temperature ?? 'No data';
+                document.getElementById('humidity').innerText = result.humidity ?? 'No data';
+                document.getElementById('result').innerText = result.label !== undefined ? (result.label ? 'True' : 'False') : 'No prediction';
+            } catch (error) {
+                console.error("Error fetching prediction:", error);
+                document.getElementById('result').innerText = 'Error fetching prediction';
+            }
+        }
+
+        // Fetch prediction on page load
+        window.onload = getPrediction;
+    </script>
+</head>
+<body>
+    <h1>DHT Sensor Prediction</h1>
+    <p>Temperature: <span id="temperature">Loading...</span> °C</p>
+    <p>Humidity: <span id="humidity">Loading...</span> %</p>
+    <p>Prediction: <span id="result">Loading...</span></p>
+</body>
+</html>
